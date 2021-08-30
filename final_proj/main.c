@@ -28,6 +28,7 @@ int main(int argc, char **argv)
     } 
     
     int a = 0;
+    
     for (i=0; i<3; i++)
     {
         a += arr[i][5];
