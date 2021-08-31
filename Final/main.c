@@ -7,20 +7,19 @@
 
 #include "temp_functions.h"
 
+extern char *optarg;
+extern int optind, opterr, optopt;
+
+void help(const char *appname);
+void print_month_stats(int numofmonth, int* p_minimum, int* mean_m);
+
 int main(int argc, char **argv)
 {
-    int month_num=0;
-    scanf("%d", &month_num);
-    int *p_month_num = &month_num;
+    int ret;
+    char *filename;
+    int month_num = 0;
 
-    FILE *f = fopen("temp.csv", "r");
-    if (!f) 
-    {
-        printf("Error opening file\n");
-        return 0;
-    }
-
-    int row = 0;
+    int mins_in_y = 0; //минут в году
 
     int ctr = 0; //минут в месяце
     int *p_ctr = &ctr;
@@ -38,6 +37,43 @@ int main(int argc, char **argv)
     int min_month = 0;
     int *p_min_month = &min_month;
 
+    int mean = 0;
+    int *p_mean = &mean;
+
+    if (argc == 1) {
+        help(argv[0]);
+        return 0;
+    }
+
+    while ((ret = getopt(argc, argv, "hf:m:")) != -1)
+    {
+        switch(ret) {
+            case 'h' : {
+                help(argv[0]);
+                return 0;
+            }
+
+            case 'f' : {
+                filename = optarg;
+                break;
+            }
+
+            case 'm' : {
+                month_num = atoi(optarg);
+                print_month_stats(month_num, p_min_month, p_mean);
+                break;
+            }
+        }
+    }
+
+    FILE *f = fopen(filename, "r");
+    if (!f) 
+    {
+        printf("Error opening file\n");
+        return 0;
+    }
+
+
     while (!feof(f)) 
     {
         struct meas m;
@@ -51,29 +87,25 @@ int main(int argc, char **argv)
                 &m.temp);
         
 
-        row++; //считаем кол-во строк в файле
+        mins_in_y++;
 
         min_year(p_min, m.temp);
         max_year(p_max, m.temp);
 
-        if(m.month == *p_month_num)
+        if(m.month == month_num)
         {
             minimum_month(p_min_month, m.temp);
             mean_month(p_ctr, p_sum_m, m.temp);
         }
         
     }
-    int mean = *p_sum_m / *p_ctr;
 
+    mean = *p_sum_m / *p_ctr;
 
     printf("Min in year: %d\n", *p_min);
     printf("Max in year: %d\n", *p_max);
 
-    printf("Min in month %d: %d\n", *p_month_num,*p_min_month);
-
-    printf("Rows in csv file:  %d\n", row);
-
-    printf("Mean in month: %d\n", mean);
+    //printf("Rows in csv file:  %d\n", row);
     
 
 
@@ -83,5 +115,23 @@ int main(int argc, char **argv)
     return 0;
 }
 
+void help(const char *appname)
+{
+    char text_to_print[1000] = "************    HELP MESSAGE    ************\n"
+                                "!!! This program requieres -f<filename.csv> argument. (like this: ./main -f temp.csv)\n"
+                                "If you only want to see statistics on one month, also put -m<month's number>. (1 is for Jan, 2-Feb and so on)\n"
+                                "If you you want to see this help message again, put a -h argument).\n";
+    printf("%s", text_to_print);
+    /*If you only want to see statistics on one month, put -m<month's number>.\n
+    If you you want to see this help message again, put a -h argument);*/
+
+    printf("You are in %s\n", appname);
+}
+
+void print_month_stats(int numofmonth, int* p_minimum, int* mean_m)
+{
+    printf("Min in month %d: %d\n", numofmonth,*p_minimum);
+    printf("Mean in month: %d\n", *mean_m);
+}
 
 

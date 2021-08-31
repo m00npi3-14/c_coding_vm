@@ -17,6 +17,7 @@ struct meas
     int temp;
 } m;
 
+
 void min_year(int* pointer, int temperature);
 void max_year(int* pointer, int temperature);
 void minimum_month(int* pointer, int temperature);
