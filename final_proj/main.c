@@ -5,33 +5,83 @@
 #include <string.h>
 #include <stdlib.h>
 
-//int mean_month_tempr(*array);
+#include "temp_functions.h"
 
 int main(int argc, char **argv)
 {
-    int arr[3][6] = {
-        {2021, 1, 1, 0, 0, -6},
-        {2021, 1, 1, 1, 1, 12},
-        {2021, 1, 2, 1, 56, 22}
-    };
+    int month_num=0;
+    scanf("%d", &month_num);
+    int *p_month_num = &month_num;
 
-    int k, j, i;
-
-
-    for (k=0; k<3; k++)
+    FILE *f = fopen("temp.csv", "r");
+    if (!f) 
     {
-        for(j=0; j<6; j++)
-        {
-            //printf("mean temp in month %d is %d", arr[])
-            printf(" %d", arr[k][j]);
-        }printf("\n");
-    } 
-    
-    int a = 0;
-    for (i=0; i<3; i++)
+        printf("Error opening file\n");
+        return 0;
+    }
+
+    int row = 0;
+
+    int ctr = 0; //минут в месяце
+    int *p_ctr = &ctr;
+
+    int sum_temps_in_month = 0; //сумма температур в заданном месяце
+    int *p_sum_m = &sum_temps_in_month;
+
+    int minimum = 0;
+    int *p_min = &minimum;
+
+    int maximum = 0;
+    int *p_max = NULL;
+    p_max = &maximum;
+
+    int min_month = 0;
+    int *p_min_month = &min_month;
+
+    while (!feof(f)) 
     {
-        a += arr[i][5];
+        struct meas m;
+
+        int scanfret = fscanf(f, "%d;%d;%d;%d;%d;%d",
+                &m.year,
+                &m.month,
+                &m.day,
+                &m.hour,
+                &m.minute,
+                &m.temp);
         
-    } printf(" %d\n", a);
 
+        row++; //считаем кол-во строк в файле
+
+        min_year(p_min, m.temp);
+        max_year(p_max, m.temp);
+
+        if(m.month == *p_month_num)
+        {
+            minimum_month(p_min_month, m.temp);
+            mean_month(p_ctr, p_sum_m, m.temp);
+        }
+        
+    }
+    int mean = *p_sum_m / *p_ctr;
+
+
+    printf("Min in year: %d\n", *p_min);
+    printf("Max in year: %d\n", *p_max);
+
+    printf("Min in month %d: %d\n", *p_month_num,*p_min_month);
+
+    printf("Rows in csv file:  %d\n", row);
+
+    printf("Mean in month: %d\n", mean);
+    
+
+
+    fclose(f);
+
+
+    return 0;
 }
+
+
+

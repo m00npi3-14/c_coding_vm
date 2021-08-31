@@ -4,7 +4,13 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <stdlib.h>
+#include <limits.h>
 
+
+int min = INT_MAX;
+int max = INT_MIN;
+
+//void year_max(int *point);
 
 struct meas 
 {
@@ -18,11 +24,9 @@ struct meas
 
 int main(int argc, char **argv)
 {
-    printf("test1\n");
 
     /*if (argc < 2) 
     {
-        printf("some problem\n");
         return -1;
     }
     char *file = argv[1];*/
@@ -34,11 +38,17 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    printf("test\n");
-    
+    int month =0;
+    int *p;
+    p = &month;
+
+    //scanf("%d", &month);
+
+    int row = 0;
     while (!feof(f)) 
     {
         struct meas m;
+
         int scanfret = fscanf(f, "%d;%d;%d;%d;%d;%d",
                 &m.year,
                 &m.month,
@@ -47,44 +57,35 @@ int main(int argc, char **argv)
                 &m.minute,
                 &m.temp);
 
+
+        row++;
+        void month_min() {
+        
+            if( m.temp < min && m.month == month) min = m.temp;
+        }
+        
+        //year_max(*p);
+
         /*if(m.hour==2 && m.day == 1 && m.month == 1)
         {
             printf("Woooow %d\n", m.temp);
         }*/
 
-        printf("ysdhd  ighdsi  %d\n", m[2].temp);
-
-        int min = 0;
-
-        while(m.month==12)
-        {
-            if(m.temp < min)
-            {
-                min = m.temp;
-                printf("Min in this year = %d   %d\n", min, m.minute);
-            }
-        }
-
-        //int min = 0;
-        //int *p = NULL;
-        //p = &min;
-        
-        /*if(m.temp < min)
-        {
-            min = m.temp;
-            printf("Min in this year = %d   %d\n", min, m.minute);
-        }*/
-        
     }
-    printf("ukigiogb\n");
-    int i = 0;
 
+    printf("counter %d\n", row);
 
-    printf("is year %d\n", m.year);
     
-    
+    printf("Minimum temp 1: %d\n", min);
+    printf("Maximum temp: %d\n", max);
+
     fclose(f);
 
 
     return 0;
+}
+
+void year_max(int *point) 
+{
+    //if( m.temp > max && m.month == p ) max = m.temp;
 }
