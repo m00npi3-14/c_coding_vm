@@ -58,11 +58,12 @@ int main(int argc, char **argv)
 
         if(m.month == *p_month_num)
         {
+
             minimum_month(p_min_month, m.temp);
             mean_month(p_ctr, p_sum_m, m.temp);
         }
+    } 
         
-    }
     int mean = *p_sum_m / *p_ctr;
 
 
